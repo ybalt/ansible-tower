@@ -25,7 +25,7 @@ ADD inventory /opt/tower-setup/inventory
 RUN cd /opt/tower-setup \
     && ./setup.sh
 
-ADD licence /etc/tower/license
+ADD license /etc/tower/license
 
 VOLUME ${PG_DATA}
 
