@@ -11,31 +11,35 @@ Prepereqisites:
 To run Ansible Tower there is two ways:
 Create container without external data mounts so if you remove container, all Postgres data that used by AT is lost:
 ```
-- docker run -t -d -p 443:443 --name=ast ybalt/ansible-tower
+# docker run -t -d -p 443:443 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
 ```
 OR
 Create separate data-only container, it will save your DB data even if ast container removed(upgrade, etc):
 ```
 # docker create -v /var/lib/postgresql/9.4/main --name astdata ybalt/ansible-tower /bin/true
-# docker run -t -d --volumes-from astdata -p 443:443 --name=ast ybalt/ansible-tower
+# docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
 ```
 
+You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this Filenames to /etc/tower:
+
+~/certs/domain.crt
+~/certs/domain.key
+~/certs/domain.license
+
+change SERVER_NAME env to your mashine ip/name for make HTTPS works (certificate should be valid for this name)
+
 Initial credentials: user:admin pass:000
-At first run AT asks for license, if you build it manually, put it into license file. All passwords for all other services is '000'
+All passwords for all other services is '000'
 
 Limitations:
-Apache2 HTTPS not configured for external access
 Only local DBs supported
 
-Please keep in mind, if you remove ast container, license info will be lost (and may be some any other data) even if you use 
+Please keep in mind, if you remove ast container, some data may be lost even if you use 
 data-only container, as in Postgres AT store only projects/tasks/results.
 
 Trademarks:
 Ansible and Ansible Tower are trademarks of Ansible, Inc.
 Docker is a registered trademark of Docker, Inc.
-
-
-
 
 
 
