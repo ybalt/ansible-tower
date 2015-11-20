@@ -20,11 +20,11 @@ Create separate data-only container, it will save your DB data even if ast conta
 # docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
 ```
 
-You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this Filenames to /etc/tower:
+You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this filenames to /etc/tower:
 ```
-~/certs/domain.crt
-~/certs/domain.key
-~/certs/domain.license
+/certs/domain.crt - copied to /etc/tower/tower.cert
+/certs/domain.key - copied to /etc/tower/tower.key
+/certs/license    - copied to /etc/tower/license
 ```
 change SERVER_NAME env to your mashine ip/name for make HTTPS works (certificate should be valid for this name)
 
@@ -37,11 +37,9 @@ Only local DBs supported
 Please keep in mind, if you remove ast container, some data may be lost even if you use 
 data-only container, as in Postgres AT store only projects/tasks/results.
 
+
+If you find any bugs/issues or need some new features, feel free to make a pull request.
+
 Trademarks:
 Ansible and Ansible Tower are trademarks of Ansible, Inc.
 Docker is a registered trademark of Docker, Inc.
-
-
-
-
-Ansible and Ansible Tower are trademarks of Ansible, Inc.
