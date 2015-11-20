@@ -25,11 +25,10 @@ ADD inventory /opt/tower-setup/inventory
 RUN cd /opt/tower-setup \
     && ./setup.sh
 
-ADD license /etc/tower/license
-
 VOLUME ${PG_DATA}
+VOLUME /certs
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+ADD docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN chmod +x /docker-entrypoint.sh
 
