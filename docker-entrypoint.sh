@@ -15,7 +15,7 @@ if [ "$1" = 'ansible-tower' ]; then
 	if [[ -a /certs/domain.crt && -a /certs/domain.key ]]; then
 		echo "copy new certs"
 		cp -r /certs/domain.crt /etc/tower/tower.cert
-		chown awx:awx /etc//tower/tower.cert
+		chown awx:awx /etc/tower/tower.cert
 		cp -r /certs/domain.key /etc/tower/tower.key
 		chown awx:awx /etc/tower/tower.key
 	fi
