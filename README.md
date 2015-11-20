@@ -21,11 +21,11 @@ Create separate data-only container, it will save your DB data even if ast conta
 ```
 
 You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this Filenames to /etc/tower:
-
+```
 ~/certs/domain.crt
 ~/certs/domain.key
 ~/certs/domain.license
-
+```
 change SERVER_NAME env to your mashine ip/name for make HTTPS works (certificate should be valid for this name)
 
 Initial credentials: user:admin pass:000
