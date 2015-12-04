@@ -4,8 +4,8 @@ FROM ubuntu:14.04
 
 MAINTAINER ybaltouski@gmail.com
 
-ENV ANSIBLE_TOWER_VER=2.4.1
-ENV PG_DATA=/var/lib/postgresql/9.4/main
+ENV ANSIBLE_TOWER_VER 2.4.1
+ENV PG_DATA /var/lib/postgresql/9.4/main
 
 RUN apt-get install -y software-properties-common \
     && apt-add-repository ppa:ansible/ansible \
@@ -32,7 +32,7 @@ ADD docker-entrypoint.sh /docker-entrypoint.sh
 
 RUN chmod +x /docker-entrypoint.sh
 
-EXPOSE 443
+EXPOSE 443 8080
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
