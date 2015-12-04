@@ -11,7 +11,7 @@ Prepereqisites:
 To run Ansible Tower there is two ways:
 Create container without external data mounts so if you remove container, all Postgres data that used by AT is lost:
 ```
-# docker run -t -d -p 443:443 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
+# docker run -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
 ```
 OR
 Create separate data-only container, it will save your DB data even if ast container removed(upgrade, etc):
