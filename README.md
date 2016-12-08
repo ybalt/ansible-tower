@@ -11,14 +11,20 @@ Prepereqisites:
 To run Ansible Tower there is two ways:
 Create container without external data mounts so if you remove container, all Postgres data that used by AT is lost:
 ```
-# docker run --privileged -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
+# docker run -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
 ```
+
 OR
 Create separate data-only container, it will save your DB data even if ast container removed(upgrade, etc):
 ```
 # docker create -v /var/lib/postgresql/9.4/main --name astdata ybalt/ansible-tower /bin/true
-# docker run --privileged -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
+# docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
 ```
+***NOTE: if you have an issue with 3.10- kernel like 
+proot error: ptrace(TRACEME): Operation not permitted
+proot error: execve("/usr/bin/ansible-playbook"): Operation not permitted
+try to add --privileged flag to docker run. Use it with cautions as it provide 
+extended access to host devices and may be dangerous***
 
 You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this filenames to /etc/tower:
 ```
