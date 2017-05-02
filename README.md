@@ -11,14 +11,14 @@ Prepereqisites:
 To run Ansible Tower there is two ways:
 Create container without external data mounts so if you remove container, all Postgres data that used by AT is lost:
 ```
-# docker run -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
+# docker run -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast lardos/ansibletower
 ```
 
 OR
 Create separate data-only container, it will save your DB data even if ast container removed(upgrade, etc):
 ```
-# docker create -v /var/lib/postgresql/9.4/main --name astdata ybalt/ansible-tower /bin/true
-# docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
+# docker create -v /var/lib/postgresql/9.4/main --name astdata lardos/ansibletower /bin/true
+# docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast lardos/ansibletower
 ```
 ***NOTE: if you have an issue with 3.10- kernel like 
 proot error: ptrace(TRACEME): Operation not permitted
