@@ -36,8 +36,8 @@ The ansible-tower Docker image uses a generic certificate generated for www.ansi
 program. If you generate your own certificate, it will be copied into /etc/tower by the entrypoint script if a volume
 is mapped to /certs in the container, e.g:
 
-* /certs/domain.crt -> /etc/tower/tower.cert
-* /certs/domain.key -> /etc/tower/tower.key
+* /certs/tower.cert -> /etc/tower/tower.cert
+* /certs/tower.key  -> /etc/tower/tower.key
 
 The environment variable SERVER_NAME should match the common name of the generated certificate and will be used to update
 the nginx configuration file.

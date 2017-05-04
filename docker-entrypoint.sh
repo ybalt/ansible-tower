@@ -14,11 +14,11 @@ if [ "$1" = "ansible-tower" ]; then
 		&& sed -i -e "s/server_name\s_/server_name $SERVER_NAME/" $NGINX_CONF
 	fi
 	
-	if [[ -a /certs/domain.crt && -a /certs/domain.key ]]; then
+	if [[ -a /certs/tower.cert && -a /certs/tower.key ]]; then
 		echo "copy new certs"
-		cp -r /certs/domain.crt /etc/tower/tower.cert
+		cp -r /certs/tower.cert /etc/tower/tower.cert
 		chown awx:awx /etc/tower/tower.cert
-		cp -r /certs/domain.key /etc/tower/tower.key
+		cp -r /certs/tower.key /etc/tower/tower.key
 		chown awx:awx /etc/tower/tower.key
 	fi
 	
