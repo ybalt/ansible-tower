@@ -32,7 +32,6 @@ RUN tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
     && rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
 WORKDIR /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}
-#ADD tower_setup_conf.yml tower_setup_conf.yml
 ADD inventory inventory
 
 # Tower setup
@@ -43,8 +42,7 @@ ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # volumes and ports
-VOLUME ${PG_DATA}
-VOLUME /certs
+VOLUME ["${PG_DATA}", "/certs"]
 EXPOSE 443
 
 CMD ["/docker-entrypoint.sh", "ansible-tower"]
