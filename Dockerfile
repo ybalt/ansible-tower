@@ -1,57 +1,48 @@
 # Ansible Tower Dockerfie
+FROM ubuntu:trusty
 
-FROM ubuntu:14.04
+LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com
 
-MAINTAINER mittell@gmail.com
+WORKDIR /opt
 
-ENV ANSIBLE_TOWER_VER 3.1.2
+ENV ANSIBLE_TOWER_VER 3.1.3
 ENV PG_DATA /var/lib/postgresql/9.4/main
 
+RUN apt-get update
+
+# Set locale
 RUN locale-gen "en_US.UTF-8" \
-    && export LC_ALL="en_US.UTF-8" \
-    && dpkg-reconfigure locales
+	&& export LC_ALL="en_US.UTF-8" \
+	&& dpkg-reconfigure locales
 
-RUN apt-get update
+# Use python >= 2.7.9
+RUN apt-get install -y software-properties-common \
+	&& apt-add-repository -y ppa:fkrull/deadsnakes-python2.7 \
+	&& apt-get update
 
-RUN apt-get install -y software-properties-common \ 
-    && apt-add-repository ppa:fkrull/deadsnakes-python2.7
+# Install libpython2.7; missing dependency in Tower setup
+RUN apt-get install -y libpython2.7
 
-RUN apt-get update
+# create /var/log/tower
+RUN mkdir -p /var/log/tower
 
-RUN apt-get upgrade
+# Download & extract Tower tarball
+ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+RUN tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
+    && rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
-#RUN apt-get install -y software-properties-common \
-#    && apt-add-repository ppa:ansible/ansible \
-#    && apt-get install -y ansible
-RUN apt-get install -y gcc locales libssl-dev python-setuptools python-simplejson python2.7 python2.7-dev build-essential \
-    && easy_install pip
+WORKDIR /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}
+ADD inventory inventory
 
-RUN pip install ansible certifi==2015.04.28
+# Tower setup
+RUN ./setup.sh
 
-ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
-
-RUN cd /opt && tar -xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && rm -rf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && mv ansible-tower-setup-${ANSIBLE_TOWER_VER} /opt/tower-setup
-
-
-ADD tower_setup_conf.yml /opt/tower-setup/tower_setup_conf.yml
-ADD inventory /opt/tower-setup/inventory
-
-RUN mkdir /var/log/tower && cd /opt/tower-setup \
-    && ./setup.sh
-
-VOLUME ${PG_DATA}
-VOLUME /certs
-
+# Docker entrypoint script
 ADD docker-entrypoint.sh /docker-entrypoint.sh
-
 RUN chmod +x /docker-entrypoint.sh
 
-EXPOSE 443 8080
+# volumes and ports
+VOLUME ["${PG_DATA}", "/certs"]
+EXPOSE 443
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["ansible-tower"]
-
-
+CMD ["/docker-entrypoint.sh", "ansible-tower"]

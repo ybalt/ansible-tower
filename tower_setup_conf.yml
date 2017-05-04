@@ -1,7 +1,0 @@
-admin_password: '000'
-configure_private_vars: {}
-database: internal
-munin_password: '000'
-pg_password: '000'
-primary_machine: localhost
-redis_password: '000'
