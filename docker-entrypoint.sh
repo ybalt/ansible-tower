@@ -1,16 +1,15 @@
 #!/bin/bash
 set -e
 
-APACHE_CONF=/etc/apache2/conf-enabled/awx-httpd-443.conf
+NGINX_CONF=/etc/nginx/nginx.conf
 
 trap "kill -15 -1 && echo all proc killed" TERM KILL INT
 
 if [ "$1" = 'ansible-tower' ]; then
 	if [[ $SERVER_NAME ]]; then
-		echo "add ServerName to $SERVER_NAME"
-		head -n 1 $APACHE_CONF | grep -q "^ServerName" \
-		&& sed -i -e "s/^ServerName.*/ServerName $SERVER_NAME/" $APACHE_CONF \
-		|| sed -i -e "1s/^/ServerName $SERVER_NAME\n/" $APACHE_CONF
+		echo "add $SERVER_NAME to server_name"
+		cat $NGINX_CONF | grep -q "server_name _" \
+		&& sed -i -e "s/server_name\s_/server_name $SERVER_NAME/" $NGINX_CONF \
 	fi
 	if [[ -a /certs/domain.crt && -a /certs/domain.key ]]; then
 		echo "copy new certs"
@@ -25,8 +24,6 @@ if [ "$1" = 'ansible-tower' ]; then
 		chown awx:awx /etc/tower/license
 	fi
 	ansible-tower-service start
-	#sleep 10
-	#watch "netstat -an | grep -E '443.*LISTEN'"
 	sleep inf & wait
 else
 	exec "$@"
