@@ -1,7 +1,7 @@
 # Ansible Tower Dockerfie
 FROM ubuntu:trusty
 
-LABEL maintainer mittell@mgail.com, reuben.stump@gmail.com
+LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com
 
 WORKDIR /opt
 
@@ -20,26 +20,31 @@ RUN apt-get install -y software-properties-common \
 	&& apt-add-repository -y ppa:fkrull/deadsnakes-python2.7 \
 	&& apt-get update
 
-# Install libpython2.7, missing dependency in Tower setup
+# Install libpython2.7; missing dependency in Tower setup
 RUN apt-get install -y libpython2.7
 
-ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+# create /var/log/tower
+RUN mkdir -p /var/log/tower
 
+# Download & extract Tower tarball
+ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 RUN tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
     && rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
 WORKDIR /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}
-ADD tower_setup_conf.yml tower_setup_conf.yml
+#ADD tower_setup_conf.yml tower_setup_conf.yml
 ADD inventory inventory
 
-RUN mkdir -p /var/log/tower
+# Tower setup
 RUN ./setup.sh
 
+# Docker entrypoint script
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
+# volumes and ports
 VOLUME ${PG_DATA}
 VOLUME /certs
-EXPOSE 443 8080
+EXPOSE 443
 
 CMD ["/docker-entrypoint.sh", "ansible-tower"]
