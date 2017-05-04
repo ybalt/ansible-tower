@@ -3,46 +3,43 @@ FROM ubuntu:trusty
 
 LABEL maintainer mittell@mgail.com, reuben.stump@gmail.com
 
+WORKDIR /opt
+
+ENV ANSIBLE_TOWER_VER 3.1.3
+ENV PG_DATA /var/lib/postgresql/9.4/main
+
 RUN apt-get update
 
 # Set locale
-RUN locale-gen "en_US.UTF-8"
-RUN export LC_ALL="en_US.UTF-8"
-RUN dpkg-reconfigure locales
+RUN locale-gen "en_US.UTF-8" \
+	&& export LC_ALL="en_US.UTF-8" \
+	&& dpkg-reconfigure locales
 
-ENV ANSIBLE_TOWER_VER 3.1.2
-ENV PG_DATA /var/lib/postgresql/9.4/main
-
+# Use python >= 2.7.9
 RUN apt-get install -y software-properties-common \
-	&& apt-add-repository -y ppa:fkrull/deadsnakes-python2.7
+	&& apt-add-repository -y ppa:fkrull/deadsnakes-python2.7 \
+	&& apt-get update
 
-RUN apt-get update
+# Install libpython2.7, missing dependency in Tower setup
 RUN apt-get install -y libpython2.7
 
-ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
-RUN cd /opt && tar -xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && rm -rf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && mv ansible-tower-setup-${ANSIBLE_TOWER_VER} /opt/tower-setup
+RUN tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
+    && rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
+WORKDIR /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}
+ADD tower_setup_conf.yml tower_setup_conf.yml
+ADD inventory inventory
 
-ADD tower_setup_conf.yml /opt/tower-setup/tower_setup_conf.yml
-ADD inventory /opt/tower-setup/inventory
+RUN mkdir -p /var/log/tower
+RUN ./setup.sh
 
-RUN mkdir /var/log/tower && cd /opt/tower-setup \
-    && ./setup.sh
+ADD docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 VOLUME ${PG_DATA}
 VOLUME /certs
-
-ADD docker-entrypoint.sh /docker-entrypoint.sh
-
-RUN chmod +x /docker-entrypoint.sh
-
 EXPOSE 443 8080
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["ansible-tower"]
-
-
+CMD ["/docker-entrypoint.sh", "ansible-tower"]
