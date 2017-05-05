@@ -1,51 +1,57 @@
 # ansible-tower
-Ansible Tower dockerized
 
-Ansible Tower (AT) is a GUI for great Ansible tool, that provides powerful remote agentless hosts management via SSH. Ansible Tower is free for case <=10 nodes, but complex to install and support restricted OS list.
+Dockerfile for standalone [Ansible Tower](https://www.ansible.com/tower) 3.x+
 
-To help users get try AT with Docker benefits, I've create Docker image that potentially run on any mashine with Docker installed. This version install only local variant - all services(Redis, MongoDB, PostreSQL) inside container. 
-
-Prepereqisites:
-- Docker 1.8 and later (older version may work but untested)
-
-To run Ansible Tower there is two ways:
-Create container without external data mounts so if you remove container, all Postgres data that used by AT is lost:
+# Build
 ```
-# docker run -t -d -p 443:443 -p 8080:8080 -v ~/certs:/certs -e SERVER_NAME=localhost --name=ast ybalt/ansible-tower
+docker build --no-cache --squash -t ansible-tower:${TOWER_VERSION} .
 ```
 
-OR
-Create separate data-only container, it will save your DB data even if ast container removed(upgrade, etc):
+# Run
+
+Run Ansible Tower with a random port:
 ```
-# docker create -v /var/lib/postgresql/9.4/main --name astdata ybalt/ansible-tower /bin/true
-# docker run -t -d --volumes-from astdata -v ~/certs:/certs -e SERVER_NAME=localhost -p 443:443 --name=ast ybalt/ansible-tower
+docker run -d -P --name tower lardos/ansible-tower
 ```
-***NOTE: if you have an issue with 3.10- kernel like 
-proot error: ptrace(TRACEME): Operation not permitted
-proot error: execve("/usr/bin/ansible-playbook"): Operation not permitted
-try to add --privileged flag to docker run. Use it with cautions as it provide 
-extended access to host devices and may be dangerous***
 
-You may use mapping for /certs as above, to add certificate and license file. Startup script will copy files with this filenames to /etc/tower:
+or map to exposed port 443:
 ```
-/certs/domain.crt - copied to /etc/tower/tower.cert
-/certs/domain.key - copied to /etc/tower/tower.key
-/certs/license    - copied to /etc/tower/license
+docker run -d -p 443:443 --name tower lardos/ansible-tower
 ```
-change SERVER_NAME env to your mashine ip/name for make HTTPS works (certificate should be valid for this name)
 
-Initial credentials: user:admin pass:000
-All passwords for all other services is '000'
+To include certificate and license on container creation:
+```
+docker run -t -d -v ~/certs:/certs -p 443:443 -e SERVER_NAME=localhost  ansible-tower
+```
 
-Limitations:
-Only local DBs supported
+To persist Ansible Tower database, create a data container:
+```
+docker create -v /var/lib/postgresql/9.4/main --name tower-data lardos/ansible-tower /bin/true
+docker run -d -p 444:443 --name tower --volumes-from tower-data lardos/ansible-tower
+```
 
-Please keep in mind, if you remove ast container, some data may be lost even if you use 
-data-only container, as in Postgres AT store only projects/tasks/results.
+# Certificates and License
 
+The ansible-tower Docker image uses a generic certificate generated for www.ansible.com by the Ansible Tower setup
+program. If you generate your own certificate, it will be copied into /etc/tower by the entrypoint script if a volume
+is mapped to /certs in the container, e.g:
 
-If you find any bugs/issues or need some new features, feel free to make a pull request.
+* /certs/tower.cert -> /etc/tower/tower.cert
+* /certs/tower.key  -> /etc/tower/tower.key
 
-Trademarks:
-Ansible and Ansible Tower are trademarks of Ansible, Inc.
-Docker is a registered trademark of Docker, Inc.
+The environment variable SERVER_NAME should match the common name of the generated certificate and will be used to update
+the nginx configuration file.
+
+A license file can also be included similar to the certificates by renaming your Ansible Tower license file to **license** and
+placing it in your local, mapped volume. The entrypoint script checks for the license file seperately and does not depend
+on the certificates.
+
+* /certs/license -> /etc/tower/license
+
+The license file can also be uploaded on first login to the Ansible Tower web interface.
+
+# Login
+
+* URL: **https://localhost**
+* Username: **admin**
+* Password: **password**
