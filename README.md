@@ -27,7 +27,11 @@ docker run -t -d -v ~/certs:/certs -p 443:443 -e SERVER_NAME=localhost  ansible-
 To persist Ansible Tower database, create a data container:
 ```
 docker create -v /var/lib/postgresql/9.4/main --name tower-data lardos/ansible-tower /bin/true
-docker run -d -p 444:443 --name tower --volumes-from tower-data lardos/ansible-tower
+docker run -d -p 443:443 --name tower --volumes-from tower-data lardos/ansible-tower
+```
+or use create a Docker Volume on the host:
+```
+docker run -d -p 443:443 -v pgdata:/var/lib/postgresql/9.4/main --name ansible-tower lardos/ansible-tower
 ```
 
 # Certificates and License
