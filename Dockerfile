@@ -1,7 +1,7 @@
 # Ansible Tower Dockerfie
 FROM ubuntu:trusty
 
-LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com
+LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com, ybaltouski@gmail.com
 
 WORKDIR /opt
 
