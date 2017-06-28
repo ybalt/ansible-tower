@@ -1,3 +1,5 @@
+[![](https://images.microbadger.com/badges/image/ybalt/ansible-tower.svg)](https://microbadger.com/images/ybalt/ansible-tower "Get your own image badge on microbadger.com")
+
 # ansible-tower
 
 Dockerfile for standalone [Ansible Tower](https://www.ansible.com/tower) 3.x+
