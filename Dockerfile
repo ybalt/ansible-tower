@@ -1,11 +1,11 @@
 # Ansible Tower Dockerfie
 FROM ubuntu:trusty
 
-LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com
+LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com, ybaltouski@gmail.com 
 
 WORKDIR /opt
 
-ENV ANSIBLE_TOWER_VER 3.1.3
+ENV ANSIBLE_TOWER_VER 3.2.1
 ENV PG_DATA /var/lib/postgresql/9.4/main
 
 RUN apt-get update
@@ -18,8 +18,9 @@ RUN locale-gen "en_US.UTF-8" \
 # Use python >= 2.7.9
 RUN apt-get install -y software-properties-common \
 	&& apt-add-repository -y ppa:fkrull/deadsnakes-python2.7 \
+	&& apt-key adv --keyserver keyserver.ubuntu.com --recv 5BB92C09DB82666C \
 	&& apt-get update
-
+	
 # Install libpython2.7; missing dependency in Tower setup
 RUN apt-get install -y libpython2.7
 
@@ -27,7 +28,7 @@ RUN apt-get install -y libpython2.7
 RUN mkdir -p /var/log/tower
 
 # Download & extract Tower tarball
-ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+ADD http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 RUN tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
     && rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 
