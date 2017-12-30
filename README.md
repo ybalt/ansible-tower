@@ -1,3 +1,5 @@
+[![](https://images.microbadger.com/badges/image/ybalt/ansible-tower.svg)](https://microbadger.com/images/ybalt/ansible-tower "Get your own image badge on microbadger.com")
+
 # ansible-tower
 
 Dockerfile for standalone [Ansible Tower](https://www.ansible.com/tower) 3.x+
@@ -11,12 +13,12 @@ docker build --no-cache --squash -t ansible-tower:${TOWER_VERSION} .
 
 Run Ansible Tower with a random port:
 ```
-docker run -d -P --name tower lardos/ansible-tower
+docker run -d -P --name tower ybalt/ansible-tower
 ```
 
 or map to exposed port 443:
 ```
-docker run -d -p 443:443 --name tower lardos/ansible-tower
+docker run -d -p 443:443 --name tower ybalt/ansible-tower
 ```
 
 To include certificate and license on container creation:
@@ -26,12 +28,12 @@ docker run -t -d -v ~/certs:/certs -p 443:443 -e SERVER_NAME=localhost  ansible-
 
 To persist Ansible Tower database, create a data container:
 ```
-docker create -v /var/lib/postgresql/9.4/main --name tower-data lardos/ansible-tower /bin/true
-docker run -d -p 443:443 --name tower --volumes-from tower-data lardos/ansible-tower
+docker create -v /var/lib/postgresql/9.4/main --name tower-data ybalt/ansible-tower /bin/true
+docker run -d -p 443:443 --name tower --volumes-from tower-data ybalt/ansible-tower
 ```
 or use create a Docker Volume on the host:
 ```
-docker run -d -p 443:443 -v pgdata:/var/lib/postgresql/9.4/main --name ansible-tower lardos/ansible-tower
+docker run -d -p 443:443 -v pgdata:/var/lib/postgresql/9.4/main --name ansible-tower ybalt/ansible-tower
 ```
 
 # Certificates and License
