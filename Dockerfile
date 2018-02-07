@@ -6,7 +6,7 @@ LABEL maintainer mittell@gmail.com, reuben.stump@gmail.com, ybaltouski@gmail.com
 WORKDIR /opt
 
 ENV ANSIBLE_TOWER_VER 3.2.1
-ENV PG_DATA /var/lib/postgresql/9.4/main
+ENV PG_DATA /var/lib/postgresql/9.6/main
 
 RUN apt-get update
 
