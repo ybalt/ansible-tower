@@ -36,6 +36,11 @@ or use create a Docker Volume on the host:
 docker run -d -p 443:443 -v pgdata:/var/lib/postgresql/9.6/main --name ansible-tower ybalt/ansible-tower
 ```
 
+If you persist any Ansible project data saved at `/var/lib/awx/projects` directory, create a Docker Volume on using the command below:
+```
+docker run -d -p 443:443 -v ~/ansible_projects:/var/lib/awx/projects --name ansible-tower ybalt/ansible-tower
+```
+
 # Certificates and License
 
 The ansible-tower Docker image uses a generic certificate generated for www.ansible.com by the Ansible Tower setup
