@@ -7,6 +7,7 @@ WORKDIR /opt
 
 ENV ANSIBLE_TOWER_VER 3.2.1
 ENV PG_DATA /var/lib/postgresql/9.6/main
+ENV AWX_PROJECTS /var/lib/awx/projects
 
 RUN apt-get update
 
@@ -43,7 +44,7 @@ ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # volumes and ports
-VOLUME ["${PG_DATA}", "/certs"]
+VOLUME ["${PG_DATA}", "${AWX_PROJECTS}", "/certs",]
 EXPOSE 443
 
 CMD ["/docker-entrypoint.sh", "ansible-tower"]
