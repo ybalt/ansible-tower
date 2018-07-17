@@ -25,6 +25,9 @@ RUN apt-get install -y software-properties-common \
 # Install libpython2.7; missing dependency in Tower setup
 RUN apt-get install -y libpython2.7
 
+# Install support for https apt sources
+RUN apt-get install -y apt-transport-https ca-certificates
+
 # create /var/log/tower
 RUN mkdir -p /var/log/tower
 
