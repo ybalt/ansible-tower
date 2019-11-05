@@ -18,6 +18,7 @@ RUN apt-get -qq update \
 	&& apt-get -yqq upgrade \
 	&& apt-get -yqq install \
 			locales \
+			software-properties-common \
 			gnupg2 \
 			gnupg \
 			libpython2.7 \
