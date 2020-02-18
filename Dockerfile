@@ -42,7 +42,9 @@ RUN cd /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER} \
 	&& chmod +x /docker-entrypoint.sh
 
 # volumes and ports
-VOLUME ["${PG_DATA}", "${AWX_PROJECTS}", "/certs",]
+VOLUME "${PG_DATA}"
+VOLUME "${AWX_PROJECTS}"
+VOLUME "/certs"
 EXPOSE 443
 
 CMD ["/docker-entrypoint.sh", "ansible-tower"]
