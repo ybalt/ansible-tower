@@ -16,7 +16,7 @@ COPY inventory inventory
 
 RUN apt-get -qq update \
 	&& apt-get -yqq upgrade \
-	&& apt-get -yqq install \
+	&& apt-get --no-install-recommends -yqq install \
 			locales \
 			gnupg2 \
 			gnupg \
@@ -28,6 +28,7 @@ RUN apt-get -qq update \
 			debconf \
 			apt-transport-https \
 			sudo \
+	&& apt-get clean \
 	&& locale-gen "en_US.UTF-8" \
 	&& echo "locales	locales/default_environment_locale	select	en_US.UTF-8" | debconf-set-selections \
 	&& dpkg-reconfigure locales \
