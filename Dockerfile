@@ -34,7 +34,7 @@ RUN apt-get -qq update \
 	&& mkdir -p /var/log/tower \
 	&& tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
 	&& rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-	&& pip install ansible \
+	&& pip install --no-cache-dir ansible \
 	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
 RUN cd /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER} \
