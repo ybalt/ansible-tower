@@ -66,3 +66,6 @@ The license file can also be uploaded on first login to the Ansible Tower web in
 * URL: **https://localhost**
 * Username: **admin**
 * Password: **password**
+
+For more information:
+https://docs.ansible.com/
