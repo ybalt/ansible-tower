@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 
 WORKDIR /opt
 
-ENV ANSIBLE_TOWER_VER 3.2.1
+ENV ANSIBLE_TOWER_VER 3.7.0-4
 ENV PG_DATA /var/lib/postgresql/9.6/main
 ENV AWX_PROJECTS /var/lib/awx/projects
 ENV LC_ALL "en_US.UTF-8"
