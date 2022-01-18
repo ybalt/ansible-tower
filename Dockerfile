@@ -18,7 +18,7 @@ RUN mkdir -p /var/log/tower \
 	&& rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
 	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
-RUN yum -y install epel-release
+RUN yum -y install epel-release --nogpgcheck
 RUN yum -y install ansible vim curl deltarpm wget sudo
 RUN yum -y install yum-utils
 RUN yum -y install python-devel
