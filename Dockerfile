@@ -1,48 +1,38 @@
 # Ansible Tower Dockerfie
-FROM ubuntu:16.04
+FROM centos:7
 
-WORKDIR /opt
+#CentOS Linux release 7.9.2009 (Core)
+RUN cat /etc/redhat-release
+
+RUN mkdir -p /vdb/tower
+WORKDIR /vdb/tower
 
 ENV ANSIBLE_TOWER_VER 3.8.5-1
-ENV PG_DATA /var/lib/postgresql/9.6/main
-ENV AWX_PROJECTS /var/lib/awx/projects
-ENV LC_ALL "en_US.UTF-8"
-ENV LANGUAGE "en_EN:en"
-ENV LANG "en_US.UTF-8"
-ENV DEBIAN_FRONTEND "noninteractive"
-ADD http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY inventory inventory
+COPY ansible-tower-setup-3.8.5-1.tar.gz ansible-tower-setup-3.8.5-1.tar.gz
+COPY licensing/licensing.py licensing.py
 
-RUN apt-get -qq update \
-	&& apt-get -yqq upgrade \
-	&& apt-get -yqq install \
-			locales \
-			gnupg2 \
-			gnupg \
-			libpython2.7 \
-			python \
-			python-pip \
-			python-dev \
-			ca-certificates \
-			debconf \
-			apt-transport-https \
-			sudo \
-	&& locale-gen "en_US.UTF-8" \
-	&& echo "locales	locales/default_environment_locale	select	en_US.UTF-8" | debconf-set-selections \
-	&& dpkg-reconfigure locales \
-	&& mkdir -p /var/log/tower \
+RUN mkdir -p /var/log/tower \
 	&& tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
 	&& rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-	&& pip install ansible \
 	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
-RUN cd /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER} \
-	&& ./setup.sh \
-	&& chmod +x /docker-entrypoint.sh
+RUN yum -y install epel-release
+RUN yum -y install ansible vim curl deltarpm wget sudo
+RUN yum -y install yum-utils
+RUN yum -y install python-devel
+RUN yum -y install postgresql
+RUN yum -y install httpd
+RUN systemctl start httpd.service
+RUN mkdir -p /var/log/tower
 
-# volumes and ports
-VOLUME ["${PG_DATA}", "${AWX_PROJECTS}", "/certs",]
+RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
+
+
+RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/
+RUN cp licensing.py licensing.py.bak00
+RUN mv /vdb/tower/licensing.py /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/licensing.py
+RUN ansible-tower-service restart
+
 EXPOSE 443
-
-CMD ["/docker-entrypoint.sh", "ansible-tower"]
