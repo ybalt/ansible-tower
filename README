@@ -1,0 +1,9 @@
+
+打包
+docker build --no-cache --squash -t ansible-tower:0.4 .
+
+构建
+docker run --privileged=true --name tower04 -d -it --rm ansible-tower:0.4 /usr/sbin/init
+
+进入
+docker exec -it tower04  /bin/bash

@@ -1,0 +1,11 @@
+# Ansible Tower Dockerfie
+FROM centos:7
+
+#cat /etc/redhat-release
+#CentOS Linux release 7.9.2009 (Core)
+RUN cat /etc/redhat-release
+
+
+RUN mkdir -p /vdb/tower
+
+WORKDIR /vdb/tower

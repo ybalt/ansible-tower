@@ -1,23 +1,30 @@
 [tower]
 localhost ansible_connection=local
 
+[automationhub]
+
 [database]
 
 [all:vars]
-admin_password='password'
+# 默认用户admin的密码  安装完成之后登录使用
+admin_password='admin'
 
-pg_host=''
-pg_port=''
+pg_host='127.0.0.1'
+pg_port='5432'
 
 pg_database='awx'
 pg_username='awx'
-pg_password='password'
+pg_password='admin'
+pg_sslmode='prefer'  # set to 'verify-full' for client-side enforced SSL
 
-rabbitmq_port=5672
-rabbitmq_vhost=tower
-rabbitmq_username=tower
-rabbitmq_password='password'
-rabbitmq_cookie=rabbitmqcookie
+# Automation Hub Configuration
 
-# Needs to be true for fqdns and ip addresses
-rabbitmq_use_long_name=false
+automationhub_admin_password='admin'
+
+automationhub_pg_host='127.0.0.1'
+automationhub_pg_port='5432'
+
+automationhub_pg_database='automationhub'
+automationhub_pg_username='automationhub'
+automationhub_pg_password='admin'
+automationhub_pg_sslmode='prefer'
