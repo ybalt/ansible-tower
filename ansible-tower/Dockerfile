@@ -16,7 +16,7 @@ COPY ./licensing/licensing.py licensing.py
 RUN mkdir -p /var/log/tower \
 	&& tar -zxvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
 	&& rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
+	&& mv -f inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
 RUN yum -y install net-tools
 RUN yum -y install initscripts
@@ -27,7 +27,7 @@ RUN mkdir -p /var/log/tower
 ## 进入安装 docker exec -it tower11  /bin/bash
 #RUN cd /vdb/tower/ansible-tower-setup-3.8.5-1 && ./setup.sh
 #RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/ && cp licensing.py licensing.py.bak00
-#RUN mv /vdb/tower/licensing.py /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/licensing.py
+#RUN mv -f /vdb/tower/licensing.py /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/licensing.py
 #RUN ansible-tower-service restart
 
 
