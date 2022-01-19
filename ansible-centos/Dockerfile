@@ -16,7 +16,9 @@ RUN yum -y install yum-utils
 RUN yum -y install python-devel
 RUN yum -y install postgresql
 RUN yum -y install httpd
-
+RUN yum -y install net-tools
+# centos7出现 bash: ip: command not found
+RUN yum -y install initscripts
 
 
 
