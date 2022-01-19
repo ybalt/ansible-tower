@@ -3,7 +3,7 @@
 docker build --no-cache --squash -t ansible-centos:v0.1 .
 
 ### 构建
-docker run --privileged=true --name tower04 -d -it --rm ansible-tower:0.5 /usr/sbin/init
+docker run --privileged=true --name tower04 -d -it --rm ansible-centos:v0.1 /usr/sbin/init
 
 docker run -d -it -p 127.0.0.1:443:443 --privileged=true --name tower05 --rm ansible-tower:0.5 /usr/sbin/init
 

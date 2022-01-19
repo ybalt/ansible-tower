@@ -1,6 +1,6 @@
 
 ### 打包
-docker build --no-cache --squash -t ansible-tower:0.6 .
+docker build --no-cache --squash -t ansible-tower:1.0 .
 
 ### 构建
 docker run --privileged=true --name tower05 -d -it --rm ansible-tower:0.6 /usr/sbin/init
