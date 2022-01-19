@@ -17,6 +17,7 @@ RUN yum -y install net-tools
 # centos7出现 bash: ip: command not found
 RUN yum -y install initscripts
 RUN mkdir -p /var/log/tower
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 #RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
 
