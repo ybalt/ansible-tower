@@ -3,8 +3,16 @@
 docker build --no-cache --squash -t ansible-tower:1.1 .
 
 ### 构建
-docker run -d -it -p 443:443 --name tower10 --privileged=true --net=host --rm ansible-tower:1.1 /usr/sbin/init
-docker exec -it tower10  /bin/bash
+docker run -d -it -p 443:443 --name tower11 --privileged=true --net=host --rm ansible-tower:1.1 /usr/sbin/init
+docker exec -it tower11  /bin/bash
+
+```
+# ip a
+# ip r del 0/0
+# ip r
+# ansible all -i localhost, -m setup -c local
+```
+
 
 
 docker run -d -it -p 127.0.0.1:443:443 --privileged=true --name tower05 --rm ansible-tower:0.6 /usr/sbin/init
