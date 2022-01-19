@@ -16,7 +16,7 @@ RUN mkdir -p /var/log/tower \
 RUN yum -y install net-tools
 RUN mkdir -p /var/log/tower
 
-#RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
+RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
 
 
 #RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/
