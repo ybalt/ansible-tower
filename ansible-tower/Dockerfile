@@ -16,16 +16,14 @@ RUN mkdir -p /var/log/tower \
 	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
 RUN yum -y install net-tools
-# centos7出现 bash: ip: command not found
 RUN yum -y install initscripts
 RUN mkdir -p /var/log/tower
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 #RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
 
+#RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/ && cp licensing.py licensing.py.bak00
 
-#RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/
-#RUN cp licensing.py licensing.py.bak00
 #RUN mv /vdb/tower/licensing.py /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/licensing.py
 #RUN ansible-tower-service restart
 
