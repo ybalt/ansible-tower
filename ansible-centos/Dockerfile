@@ -1,7 +1,7 @@
 # Ansible Tower Dockerfie
 FROM centos:7
 
-MAINTAINER hxt
+MAINTAINER lucky
 
 #CentOS Linux release 7.9.2009 (Core)
 RUN cat /etc/redhat-release

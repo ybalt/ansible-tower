@@ -1,6 +1,8 @@
 # Ansible Tower Dockerfie
 FROM ansible-centos:v0.1
 
+MAINTAINER lucky
+
 WORKDIR /vdb/tower
 
 ENV ANSIBLE_TOWER_VER 3.8.5-1
