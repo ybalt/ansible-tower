@@ -24,11 +24,10 @@ RUN yum -y install yum-utils
 RUN yum -y install python-devel
 RUN yum -y install postgresql
 RUN yum -y install httpd
-#RUN systemctl start httpd.service
+RUN systemctl start httpd.service
 RUN mkdir -p /var/log/tower
 
-RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} \
-	&& ./setup.sh \
+RUN cd /vdb/tower/ansible-tower-setup-${ANSIBLE_TOWER_VER} && ./setup.sh
 
 
 RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/
