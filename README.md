@@ -51,7 +51,7 @@ docker cp /opt/test/file.txt mycontainer:/opt/testnew/
 收藏
 https://hub.docker.com/r/ybalt/ansible-tower/
 https://github.com/ybalt/ansible-tower
-https://10.0.0.80/#/license
+https://10.XX.XX.XX/#/license
 https://www.tracymc.cn/archives/1510
 
 
