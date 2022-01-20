@@ -14,8 +14,8 @@ FROM ansible-centos:v0.1
 ```
 ### 构建
 docker run --privileged=true --name tower04 -d -it --rm ansible-centos:v0.1 /usr/sbin/init
-docker run -d -it -p 127.0.0.1:443:443 --privileged=true --name tower05 ansible-tower:0.5 /usr/sbin/init
-docker run -d -it --network bridge -p 127.0.0.1:443:443 --privileged=true --name tower05 ansible-tower:0.5 /usr/sbin/init
+docker run -d -it -p 443:443 -p 80:80 --privileged=true --name tower05 ansible-tower:0.5 /usr/sbin/init
+docker run -d -it --network bridge -p 443:443 -p 80:80 --privileged=true --name tower05 ansible-tower:0.5 /usr/sbin/init
 
 ### 进入
 docker exec -it tower05  /bin/bash
