@@ -3,7 +3,7 @@
 docker build --no-cache --squash -t ansible-tower:1.4 .
 
 ### 构建
-docker run -d -it -p 443:443 --name tower15 --privileged=true --net=host ansible-tower:1.5 /usr/sbin/init
+docker run -d -it -p 443:443 --name tower14 --privileged=true ansible-tower:1.4 /usr/sbin/init
 docker exec -it tower14  /bin/bash
 
 ```
