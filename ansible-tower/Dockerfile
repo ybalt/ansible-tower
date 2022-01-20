@@ -29,13 +29,10 @@ RUN mkdir -p /var/log/tower
 #RUN cd /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/ && cp licensing.py licensing.py.bak00
 #RUN mv -f /vdb/tower/licensing.py /var/lib/awx/venv/awx/lib/python3.6/site-packages/awx/main/utils/licensing.py
 #RUN ansible-tower-service restart
-
-
-
-RUN chmod +x /docker-entrypoint.sh
+#RUN chmod +x /vdb/tower/docker-entrypoint.sh
 
 # volumes and ports
 #VOLUME ["${PG_DATA}", "${AWX_PROJECTS}", "/certs"]
-EXPOSE 443
+EXPOSE 80 443
 
 CMD ["/docker-entrypoint.sh", "ansible-tower"]
