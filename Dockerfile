@@ -1,41 +1,48 @@
 # Ansible Tower Dockerfie
+FROM ubuntu:16.04
 
-FROM ubuntu:14.04
+WORKDIR /opt
 
-MAINTAINER ybaltouski@gmail.com
+ENV ANSIBLE_TOWER_VER 3.2.1
+ENV PG_DATA /var/lib/postgresql/9.6/main
+ENV AWX_PROJECTS /var/lib/awx/projects
+ENV LC_ALL "en_US.UTF-8"
+ENV LANGUAGE "en_EN:en"
+ENV LANG "en_US.UTF-8"
+ENV DEBIAN_FRONTEND "noninteractive"
+ADD http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY inventory inventory
 
-ENV ANSIBLE_TOWER_VER 2.4.1
-ENV PG_DATA /var/lib/postgresql/9.4/main
+RUN apt-get -qq update \
+	&& apt-get -yqq upgrade \
+	&& apt-get -yqq install \
+			locales \
+			gnupg2 \
+			gnupg \
+			libpython2.7 \
+			python \
+			python-pip \
+			python-dev \
+			ca-certificates \
+			debconf \
+			apt-transport-https \
+			sudo \
+	&& locale-gen "en_US.UTF-8" \
+	&& echo "locales	locales/default_environment_locale	select	en_US.UTF-8" | debconf-set-selections \
+	&& dpkg-reconfigure locales \
+	&& mkdir -p /var/log/tower \
+	&& tar xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
+	&& rm -f ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
+	&& pip install ansible \
+	&& mv inventory ansible-tower-setup-${ANSIBLE_TOWER_VER}/inventory
 
-RUN apt-get install -y software-properties-common \
-    && apt-add-repository ppa:ansible/ansible \
-    && apt-get update \
-    && apt-get install -y ansible
+RUN cd /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER} \
+	&& ./setup.sh \
+	&& chmod +x /docker-entrypoint.sh
 
-ADD http://releases.ansible.com/awx/setup/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz /opt/ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz
+# volumes and ports
+VOLUME ["${PG_DATA}", "${AWX_PROJECTS}", "/certs",]
+EXPOSE 443
 
-RUN cd /opt && tar -xvf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && rm -rf ansible-tower-setup-${ANSIBLE_TOWER_VER}.tar.gz \
-    && mv ansible-tower-setup-${ANSIBLE_TOWER_VER} /opt/tower-setup
-
-
-ADD tower_setup_conf.yml /opt/tower-setup/tower_setup_conf.yml
-ADD inventory /opt/tower-setup/inventory
-
-RUN cd /opt/tower-setup \
-    && ./setup.sh
-
-VOLUME ${PG_DATA}
-VOLUME /certs
-
-ADD docker-entrypoint.sh /docker-entrypoint.sh
-
-RUN chmod +x /docker-entrypoint.sh
-
-EXPOSE 443 8080
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["ansible-tower"]
-
-
+CMD ["/docker-entrypoint.sh", "ansible-tower"]
