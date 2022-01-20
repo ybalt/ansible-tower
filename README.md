@@ -1,77 +1,68 @@
+[![](https://images.microbadger.com/badges/image/ybalt/ansible-tower.svg)](https://microbadger.com/images/ybalt/ansible-tower "Get your own image badge on microbadger.com")
 
-### 打包
-docker build --no-cache --squash -t ansible-tower:0.5 .
+# ansible-tower
 
-### 构建
-docker run --privileged=true --name tower04 -d -it --rm ansible-tower:0.5 /usr/sbin/init
+Dockerfile for standalone [Ansible Tower](https://www.ansible.com/tower) 3.x+
 
-docker run -d -it -p 443:443 --privileged=true --name tower05 --rm ansible-tower:0.5 /usr/sbin/init
+# Build
+```
+docker build --no-cache --squash -t ansible-tower:${TOWER_VERSION} .
+```
 
-docker run -d -it --network bridge -p 443:443 --privileged=true --name tower05 --rm ansible-tower:0.5 /usr/sbin/init
+# Run
 
-### 进入
-docker exec -it tower05  /bin/bash
+Run Ansible Tower with a random port:
+```
+docker run -d -P --name tower ybalt/ansible-tower
+```
 
-### 拷贝
+or map to exposed port 443:
+```
+docker run -d -p 443:443 --name tower ybalt/ansible-tower
+```
 
-#### 从容器拷贝文件到宿主机
-docker cp mycontainer:/opt/testnew/file.txt /opt/test/
+To include certificate and license on container creation:
+```
+docker run -t -d -v ~/certs:/certs -p 443:443 -e SERVER_NAME=localhost  ansible-tower
+```
 
-#### 从宿主机拷贝文件到容器
-docker cp /opt/test/file.txt mycontainer:/opt/testnew/
+To persist Ansible Tower database, create a data container:
+```
+docker create -v /var/lib/postgresql/9.6/main --name tower-data ybalt/ansible-tower /bin/true
+docker run -d -p 443:443 --name tower --volumes-from tower-data ybalt/ansible-tower
+```
+or use create a Docker Volume on the host:
+```
+docker run -d -p 443:443 -v pgdata:/var/lib/postgresql/9.6/main --name ansible-tower ybalt/ansible-tower
+```
 
-> 注意: 不管容器有没有启动，拷贝命令都会生效。
+If you want to persist any Ansible project data saved at `/var/lib/awx/projects` directory, create a Docker Volume on using the command below:
+```
+docker run -d -p 443:443 -v ~/ansible_projects:/var/lib/awx/projects --name ansible-tower ybalt/ansible-tower
+```
 
+# Certificates and License
 
+The ansible-tower Docker image uses a generic certificate generated for www.ansible.com by the Ansible Tower setup
+program. If you generate your own certificate, it will be copied into /etc/tower by the entrypoint script if a volume
+is mapped to /certs in the container, e.g:
 
+* /certs/tower.cert -> /etc/tower/tower.cert
+* /certs/tower.key  -> /etc/tower/tower.key
 
-docker exec -it tower_03  /bin/bash
+The environment variable SERVER_NAME should match the common name of the generated certificate and will be used to update
+the nginx configuration file.
 
+A license file can also be included similar to the certificates by renaming your Ansible Tower license file to **license** and
+placing it in your local, mapped volume. The entrypoint script checks for the license file seperately and does not depend
+on the certificates.
 
-docker cp 44a8d6224bd6:/var/lib/awx/venv/awx/lib/python2.7/site-packages/tower_license/__init__.py  /root/ansible-tower/
-docker cp /root/ansible-tower/__init__.py 44a8d6224bd6:/var/lib/awx/venv/awx/lib/python2.7/site-packages/tower_license/
+* /certs/license -> /etc/tower/license
 
-cd /var/lib/awx/venv/awx/lib/python2.7/site-packages/tower_license/
+The license file can also be uploaded on first login to the Ansible Tower web interface.
 
+# Login
 
-修改完重新编译一下:
-[root@test01 tower_license]# python -m py_compile __init__.py
-[root@test01 tower_license]# python -O -m py_compile __init__.py
-重启服务:
-[root@test01 tower_license]# ansible-tower-service restart
-
-### 拷贝
-
-#### 从容器拷贝文件到宿主机
-docker cp mycontainer:/opt/testnew/file.txt /opt/test/
-
-#### 从宿主机拷贝文件到容器
-docker cp /opt/test/file.txt mycontainer:/opt/testnew/
-
-收藏
-https://hub.docker.com/r/ybalt/ansible-tower/
-https://github.com/ybalt/ansible-tower
-https://10.XX.XX.XX/#/license
-https://www.tracymc.cn/archives/1510
-
-
-docker build --no-cache --squash -t ansible-tower:3.8.5-1 .
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* URL: **https://localhost**
+* Username: **admin**
+* Password: **password**
